@@ -10,5 +10,14 @@ with open(join(get_resources_path(), "departments.json"), 'r') as json_file:
         items[data['id']] = data
 
 
-def get(department_id: int):
+def get(department_id: int) -> dict:
+    """
+    Returns the department by it's id
+
+    Args:
+        department_id (int): Unique identifier of the department
+
+    Returns:
+        dict: Return the representation of the department
+    """
     return copy.copy(items.get(department_id))

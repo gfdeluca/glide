@@ -6,14 +6,6 @@ from ..model.error_models import NotFoundException
 import dataclasses
 import json
 
-
-class EnhancedJSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if dataclasses.is_dataclass(o):
-            return dataclasses.asdict(o)
-        return super().default(o)
-
-
 api = EmployeeApi.api
 _api = EmployeeApi.employee
 
@@ -30,6 +22,14 @@ class EmployeesList(Resource):
     @api.doc('List of employees')
     @api.marshal_list_with(_api, envelope='employees')
     def get(self):
+        """
+        Get a list of employees with its corresponding data if applied by the expand parameter
+
+        Args:
+
+        Returns:
+            None
+        """
         api.logger.info("Some log from the controller")
         expands = request.args.getlist("expand")
         limit = request.args.get("limit", type=int, default=100)
@@ -49,11 +49,18 @@ class EmployeesList(Resource):
     }
 )
 @api.response(404, 'Employee not found.')
-class Employee(Resource):
+class EmployeeDetail(Resource):
     @api.doc('get a user')
     @api.marshal_with(_api)
-    def get(self, employee_id):
-        """get a employee given its identifier"""
+    def get(self, employee_id: int):
+        """Get a employee given its identifier,
+
+        Args:
+            employee_id (int): Unique identifier of the employee.
+
+        Returns:
+            object:
+        """
         expands = request.args.getlist("expand")
         employee = get_a_employee(employee_id, *expands)
 
